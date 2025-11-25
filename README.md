@@ -1,146 +1,70 @@
-# Galaxy Book4 Pro 360 Audio Notes
+# Bug Bounty for Galaxy Book4 Pro 360 Speaker Support on Linux
 
-I did not succeed in getting anything working here, just including some notes in case someone else finds this useful in the future.
+**💰 I am offering a $500 USD bug bounty to anyone who can get the speakers working on Linux for the Samsung Galaxy Book4 Pro 360 laptop (NP960QGK).**
 
-All testing was done on EndeavourOS (Arch Linux).
+- If this issue is also affecting you, please consider adding to this pledge! Just submit a pull request with the amount you would like to contribute.
+- See [PLEDGE.md](./PLEDGE.md) for the full terms of the pledge.
 
-Links:
+## What is the problem?
 
-- https://jcs.org/2018/11/12/vfio
+The internal speakers on the Samsung Galaxy Book4 Pro 360 laptop (NP960QGK) and other related models do not produce any sound on Linux.
 
-## Dumping HDA verbs
+- This laptop uses the Realtek ALC298 codec and MAX98390 amplifiers.
+- Headphone jack is working, but not the internal speakers.
+- This issue is similar to previous Samsung Galaxy Book models, which required HDA verb speaker amplifier quirks.
+- However, unlike previous models, we have not yet been able to hear output from the speakers while running Windows in QEMU with official drivers. This model may require additional initialization of the MAX98390 amplifiers over I2C.
 
-Following this guide: https://github.com/Conmanx360/QemuHDADump/wiki/Setup-and-usage-of-the-program
+### Other affected models
 
-First, we need to identify the devices to pass through to the VM. Get the `pci-id` of the sound card:
+The following other Book4 models are also known to be affected:
 
-```
-$ lspci -nn
-...
-00:1f.3 Multimedia audio controller [0401]: Intel Corporation Meteor Lake-P HD Audio Controller [8086:7e28] (rev 20)
-```
+- Samsung Galaxy Book4 Pro (NP940XGK)
 
-We need to pass through this sound card as well as all other devices in the same iommu group. Do `find /sys/kernel/iommu_groups/ -type l` and we see our `1f.3` device is in group 17:
+[Speakers are also broken on the Galaxy Book5](https://github.com/thesofproject/linux/issues/5572), but that is outside the scope of this bug bounty.
 
-```
-/sys/kernel/iommu_groups/17/devices/0000:00:1f.3
-```
+**I personally own the Galaxy Book4 Pro 360 (NP960QGK), and all hardware information and debugging output in this repository will reference this model unless otherwise specified.**
 
-Find all other devices in group 17:
+## Existing discussions
 
-```
-slensky@book:~$ find /sys/kernel/iommu_groups/ -type l | grep iommu_groups/17/
-/sys/kernel/iommu_groups/17/devices/0000:00:1f.0
-/sys/kernel/iommu_groups/17/devices/0000:00:1f.5
-/sys/kernel/iommu_groups/17/devices/0000:00:1f.3
-/sys/kernel/iommu_groups/17/devices/0000:00:1f.4
-slensky@book:~$ lspci -nn | grep 1f.
-00:1f.0 ISA bridge [0601]: Intel Corporation Meteor Lake-H eSPI Controller [8086:7e02] (rev 20)
-00:1f.3 Multimedia audio controller [0401]: Intel Corporation Meteor Lake-P HD Audio Controller [8086:7e28] (rev 20)
-00:1f.4 SMBus [0c05]: Intel Corporation Meteor Lake-P SMBus Controller [8086:7e22] (rev 20)
-00:1f.5 Serial bus controller [0c80]: Intel Corporation Meteor Lake-P SPI Controller [8086:7e23] (rev 20)
-```
+- [thesofproject/linux#5002](https://github.com/thesofproject/linux/issues/5002) Samsung Galaxy Book4 Pro 14" (NP940XGK) - speakers do not work
+  - This is the original SOF issue for this laptop. @dgunay provided a lot of useful information near the start of the issue, but later discussion is mostly unhelpful.
+  - I already submitted a [$100 bounty on BountyHub](https://www.bountyhub.dev/bounty/view/b1ccd1f8-9d97-4cf4-8b86-2250fccd0dab) for this particular issue. If you are also able to claim this, please consider it a bonus on top of the already promised $500.
+- [thesofproject/linux#5568](https://github.com/thesofproject/linux/issues/5568) Samsung Galaxy Book 4 Pro (940XGK) - No speaker audio, MAX98390 amplifiers not integrated
+  - More recent issue with a lot of useful technical details courtesy of @BreadJS.
+- [Kernel Bugzilla #218862](https://bugzilla.kernel.org/show_bug.cgi?id=218862) [Samsung Galaxy Book4 Pro - 940XGK] No sound from internal speakers
+- [Manjaro Forums](https://forum.manjaro.org/t/no-sound-from-speakers-on-samsung-book4-360-pro/161175) No sound from speakers on Samsung Book4 360 Pro
 
-These all seem safe to pass through.
+## Additional technical details
 
-Load these devices with `pci-stub` to prevent them from being used in the running system:
+### Running Windows in QEMU
 
-- Documentation for adding kernel parameters is [here](https://wiki.archlinux.org/title/Kernel_parameters#systemd-boot).
-- Add a new entry in `/efi/loader/entries` with the following additional `options`: `pci-stub.ids=8086:7e02,8086:7e28,8086:7e22,8086:7e23 intel_iommu=on`
-  - In my case, I created `/efi/loader/entries/5e1450eea7324302a5d2b163296edb94-6.15.9-arch1-1-pci-stub.conf`
-- Reboot using new entry
-  - Can be verified using `lspci -nnk` (our device should show `Kernel driver in use: pci-stub`)
+I was ultimately unable to get the speakers working in virtualized Windows, but I compiled a list of notes from my attempt.
 
-Then, bind with `vfio` to prepare for pass-through:
+- [QEMU Windows notes](./qemu/README.md)
 
-```sh
-sudo ./vfio-bind.sh 0000:00:1f.0
-sudo ./vfio-bind.sh 0000:00:1f.5
-sudo ./vfio-bind.sh 0000:00:1f.3
-sudo ./vfio-bind.sh 0000:00:1f.4
-```
+### Hardware information
 
-`lspci -nnk` should now show `Kernel driver in use: vfio-pci`.
+Additional log files to help with debugging are available in this repository. All logs were captured on EndeavourOS kernel `6.17.8-arch1-1` on the NP960QGK.
 
-### Compiling QEMU
+- [acpidump.log](./dumps/acpidump.log) - Output of `acpidump`
+- [alsa-info.txt](./dumps/alsa-info.txt) - Output of `alsa-info.sh`
+- [dmesg.log](./dumps/dmesg.log) - Output of `dmesg` directly after boot
+- [lspci.txt](./dumps/lspci.txt) - Output of `lspci -knn`
 
-**Note: to get a complete dump, we are eventually going to need to apply a [code patch](https://github.com/joshuagrisham/galaxy-book2-pro-linux/tree/main/sound/qemu) here in addition to the `./configure` option. Didn't see the point in bothering with this until we get the drivers working properly in virtualized Windows.**
+### Previous Galaxy Book models
 
-Resources:
+Things are likely slightly different for the newer models, but here is a thread on speaker support for the older Galaxy Book2 and Book3:
 
-- Arch Linux package - https://gitlab.archlinux.org/archlinux/packaging/packages/qemu
-- `makepkg` docs - https://wiki.archlinux.org/title/Makepkg
+- [thesofproject/linux#4055](https://github.com/thesofproject/linux/issues/4055) [BUG] Samsung Galaxy Book2 Pro 360 no sound through speaker
 
-Steps:
+These laptops required HDA verb quirks to properly initialize the amplifiers, it may be similar on the Book4.
 
-1. `git clone https://gitlab.archlinux.org/archlinux/packaging/packages/qemu.git && cd qemu`
-2. Add `--enable-trace-backends=log`
+## Testing your solution
 
-   ```diff
-    diff --git a/PKGBUILD b/PKGBUILD
-    index 227a2a5..82cbc31 100644
-    --- a/PKGBUILD
-    +++ b/PKGBUILD
-    @@ -21,7 +21,7 @@ pkgname=(
-      qemu-tests
-      qemu-tools
-      qemu-ui-{curses,dbus,egl-headless,gtk,opengl,sdl,spice-{app,core}}
-    -  qemu-user{,-static}{,-binfmt}
-    +  qemu-user{,-binfmt}
-      qemu-vhost-user-gpu
-      qemu-vmsr-helper
-      qemu-{base,desktop,emulators-full,full}
-    @@ -369,7 +369,7 @@ build() {
+I am willing to run any commands for you to help test things. Please just reach out, either here on GitHub or in our Discord server: https://discord.gg/msgJHDwTfe
 
-      (
-        cd build-static
-    -    ../$pkgbase-$pkgver/configure "${configure_static_options[@]}"
-    +    ../$pkgbase-$pkgver/configure "${configure_static_options[@]}" --enable-trace-backends=log
-        ninja
-      )
+## If you are also having this problem...
 
-    @@ -379,7 +379,7 @@ build() {
+Please reach out on one of the issue threads linked above to let Linux maintainers know this issue is important to you. Also, remember that they are mostly unpaid volunteers!
 
-      (
-        cd build
-    -    ../$pkgbase-$pkgver/configure "${configure_options[@]}"
-    +    ../$pkgbase-$pkgver/configure "${configure_options[@]}" --enable-trace-backends=log
-        ninja
-      )
-   ```
-
-3. `makepkg --syncdeps --skippgpcheck`
-4. `makepkg --install`
-
-### Cloning Existing Windows partition
-
-When I first purchased the laptop, I took a full disk backup onto an external drive. Then, I used gparted to shrink the Windows partition so it didn't take an excessive amount of space.
-
-Clone the disk to a QEMU image:
-
-- I created a new partition at `/dev/nvme0n1p10` to house the QEMU image (`sudo mount /dev/nvme0n1p10 /mnt`).
-- Create the image: `sudo qemu-img convert -f raw -O qcow2 /dev/sda /mnt/samsung-windows.qcow2`
-- Verify image: https://unix.stackexchange.com/questions/268460/how-to-mount-qcow2-image
-- Create overlay for persistent storage: `sudo qemu-img create -f qcow2 -b /mnt/samsung-windows.qcow2 -F qcow2 /mnt/overlay.qcow2`
-
-### Starting VM
-
-Run `./startvm.sh`. Notes:
-
-- `-cpu qemu64` is required to avoid BSOD (`-cpu host` doesn't work). TPM issue?
-- `-bios /usr/share/OVMF/x64/OVMF.4m.fd` enables UEFI
-
-I installed Windows and then downloaded the audio driver [from Samsung](https://www.samsung.com/global/galaxybooks-downloadcenter/model/?modelCode=NP960QGK-KG1US&siteCode=us). It's unclear if this installed correctly, the setup window appeared and said it was installing, but then the window closed with no confirmation.
-
-After this, the speakers were still not working:
-
-<img width="573" height="264" alt="image" src="https://github.com/user-attachments/assets/e32f4f35-c1a6-4a5d-a511-7d09a175f63f" />
-<img width="1797" height="882" alt="image" src="https://github.com/user-attachments/assets/f05fea10-bed3-455b-8531-c86bbb060ff6" />
-<img width="1805" height="872" alt="image" src="https://github.com/user-attachments/assets/77632df6-ac1c-4a61-88c5-0e8d19c3092c" />
-
-Reboot did not help.
-
-Possibilities I could think of:
-
-- I missed a PCI device that should have been passed through. I included the full output of `lspci -knn` in [lspci.txt](./lspci.txt).
-- We are missing ACPI methods to initialize/control the codec. These would not be passed through to the VM with my configuration.
+**With that in mind, please consider donating to the bug bounty pledge by submitting a pull request and adding your amount above and in [PLEDGE.md](./PLEDGE.md).**
