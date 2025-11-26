@@ -48,6 +48,7 @@ Additional log files to help with debugging are available in this repository. Al
 
 - [acpidump.log](./dumps/acpidump.log) - Output of `acpidump`
 - [alsa-info.txt](./dumps/alsa-info.txt) - Output of `alsa-info.sh`
+- [build.config](./dumps/build.config) - Contents of `/usr/lib/modules/$(uname -r)/build/.config`
 - [dmesg.log](./dumps/dmesg.log) - Output of `dmesg` directly after boot
 - [lspci.txt](./dumps/lspci.txt) - Output of `lspci -knn`
 
