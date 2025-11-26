@@ -16,7 +16,7 @@ The internal speakers on the Samsung Galaxy Book4 Pro 360 laptop (NP960QGK) and 
 
 Tracking issues:
 
-- [thesofproject/linux#5606](https://github.com/thesofproject/linux/issues/5606) Samsung Galaxy Book4 Pro 360 (NP960QGK) - No sound from internal speakers
+- [thesofproject/linux#5606](https://github.com/thesofproject/linux/issues/5606) Samsung Galaxy Book4 Pro 360 (NP960QGK) - No sound from internal speakers (ALC298/MAX98390)
 - [Kernel Bugzilla #220808](https://bugzilla.kernel.org/show_bug.cgi?id=220808) Samsung Galaxy Book4 Pro 360 (NP960QGK) Laptop - No sound from internal speakers
 
 ### Other affected models
