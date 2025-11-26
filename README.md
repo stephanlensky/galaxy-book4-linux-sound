@@ -14,6 +14,11 @@ The internal speakers on the Samsung Galaxy Book4 Pro 360 laptop (NP960QGK) and 
 - This issue is similar to previous Samsung Galaxy Book models, which required HDA verb speaker amplifier quirks.
 - However, unlike previous models, we have not yet been able to hear output from the speakers while running Windows in QEMU with official drivers. This model may require additional initialization of the MAX98390 amplifiers over I2C.
 
+Tracking issues:
+
+- [thesofproject/linux#5606](https://github.com/thesofproject/linux/issues/5606) Samsung Galaxy Book4 Pro 360 (NP960QGK) - No sound from internal speakers
+- [Kernel Bugzilla #220808](https://bugzilla.kernel.org/show_bug.cgi?id=220808) Samsung Galaxy Book4 Pro 360 (NP960QGK) Laptop - No sound from internal speakers
+
 ### Other affected models
 
 The following other Book4 models are also known to be affected:
@@ -24,10 +29,10 @@ The following other Book4 models are also known to be affected:
 
 **I personally own the Galaxy Book4 Pro 360 (NP960QGK), and all hardware information and debugging output in this repository will reference this model unless otherwise specified.**
 
-## Existing discussions
+## Other existing discussions
 
 - [thesofproject/linux#5002](https://github.com/thesofproject/linux/issues/5002) Samsung Galaxy Book4 Pro 14" (NP940XGK) - speakers do not work
-  - This is the original SOF issue for this laptop. @dgunay provided a lot of useful information near the start of the issue, but later discussion is mostly unhelpful.
+  - This is the original SOF issue for the Book4 series. @dgunay provided a lot of useful information near the start of the issue, but later discussion is mostly unhelpful.
   - I already submitted a [$100 bounty on BountyHub](https://www.bountyhub.dev/bounty/view/b1ccd1f8-9d97-4cf4-8b86-2250fccd0dab) for this particular issue. If you are also able to claim this, please consider it a bonus on top of the already promised $500.
 - [thesofproject/linux#5568](https://github.com/thesofproject/linux/issues/5568) Samsung Galaxy Book 4 Pro (940XGK) - No speaker audio, MAX98390 amplifiers not integrated
   - More recent issue with a lot of useful technical details courtesy of @BreadJS.
