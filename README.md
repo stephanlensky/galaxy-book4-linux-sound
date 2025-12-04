@@ -67,7 +67,7 @@ These laptops required HDA verb quirks to properly initialize the amplifiers, it
 
 ## Testing your solution
 
-I am willing to run any commands for you to help test things. Please just reach out, either here on GitHub or in our Discord server: https://discord.gg/msgJHDwTfe
+I am willing to run any commands for you to help test things. Please just reach out here on GitHub or privately through email.
 
 ## If you are also having this problem...
 
