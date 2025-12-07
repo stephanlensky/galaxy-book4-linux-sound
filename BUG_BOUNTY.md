@@ -1,4 +1,4 @@
-## Update: As of 12/6/25 all bounties has been claimed! Please see the updated [README.md](./README.md) for details on the final patch.
+## Update: As of Dec 6 2025 all bounties have been claimed! Please see the updated [README.md](./README.md) for details on the final patch.
 
 # Bug Bounty for Galaxy Book4 Pro 360 Speaker Support on Linux
 
