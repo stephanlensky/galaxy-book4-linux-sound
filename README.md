@@ -1,3 +1,5 @@
+### **Congratulations to BreadJS for claiming the [bug bounty](./BUG_BOUNTY.md)!**
+
 # Galaxy Book4 Speaker Support for Linux
 
 This repository contains instructions for applying [BreadJS's Linux kernel patch](https://github.com/thesofproject/linux/pull/5616) to fix the internal speakers on the Samsung Galaxy Book4 series. So far, the patch has been tested with the following laptop models:
