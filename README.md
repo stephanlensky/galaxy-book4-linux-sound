@@ -7,7 +7,7 @@ This repository contains instructions for applying [BreadJS's Linux kernel patch
 
 The below instructions are written for Arch Linux. The process for compiling and installing a modified kernel will vary depending on your distribution.
 
-> [!CAUTION]
+> [!WARNING]
 > **Proceed at your own risk:** I am not responsible if this patch causes damage to your laptop speakers, if you mess up your bootloader configuration, if a random speaker malfunction causes your cat to get scared, etc. etc.
 >
 > **If you are unfamiliar with Linux, it would be better to wait for the patch to get merged so you can get it with a regular system update.**
