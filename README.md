@@ -91,7 +91,7 @@ After completing the above steps, you should have the following newly built pack
 
 2. Add an entry in your bootloader for the newly installed kernel. This will vary depending on the bootloader you selected during installation.
 
-   - [systemd-boot](https://wiki.archlinux.org/title/Systemd-boot) - The easiest way is to copy your existing Arch Linux boot entry (found under `/loader/entries` on your EFI partition) and modify the `linux` and `initrd` options to point to the new kernel.
+   - [systemd-boot](https://wiki.archlinux.org/title/Systemd-boot) - The easiest way is to copy your existing Arch Linux boot entry (found under `loader/entries` on your EFI partition) and modify the `linux` and `initrd` options to point to the new kernel.
 
      For example, on my system I copied `/boot/loader/entries/arch.conf` to `/boot/loader/entries/arch-galaxy-audio.conf` and modified it to look like this:
 
