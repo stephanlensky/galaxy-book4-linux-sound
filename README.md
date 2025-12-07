@@ -50,7 +50,7 @@ pacman -S sof-firmware linux-firmware-intel alsa-firmware
    wget https://github.com/thesofproject/linux/pull/5616.diff -O galaxy-book4-max98390-support.patch
    ```
 
-5. (Optional) Edit `/etc/makepkg.conf` to [enable `ccache`](https://wiki.archlinux.org/title/Ccache) and and [parallel compilation](https://wiki.archlinux.org/title/Makepkg#Improving_build_times).
+5. **(Optional)** Edit `/etc/makepkg.conf` to [enable `ccache`](https://wiki.archlinux.org/title/Ccache) and and [parallel compilation](https://wiki.archlinux.org/title/Makepkg#Improving_build_times).
 
 6. Compile the kernel:
 
