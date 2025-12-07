@@ -1,3 +1,5 @@
+## Update: As of 12/6/25 all bounties have been claimed! Please see the updated [README.md](./README.md) for details on the final patch.
+
 # Pledge Terms
 
 **For complete Linux speaker support on Samsung Galaxy Book4 Pro 360 (NP960QGK)**

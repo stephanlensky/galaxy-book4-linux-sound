@@ -1,0 +1,60 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index dd779f9..e1fc6f7 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -1,6 +1,6 @@
+ # Maintainer: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+ 
+-pkgbase=linux
++pkgbase=linux-galaxy-audio
+ pkgver=6.18.arch1
+ pkgrel=1
+ pkgdesc='Linux'
+@@ -29,7 +29,8 @@ makedepends=(
+   texlive-latexextra
+ )
+ options=(
+-  zipkmod
++  !debug
++  !strip
+ )
+ _srcname=linux-${pkgver%.*}
+ _srctag=v${pkgver%.*}-${pkgver##*.}
+@@ -37,6 +38,7 @@ source=(
+   https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.{xz,sign}
+   $url/releases/download/$_srctag/linux-$_srctag.patch.zst{,.sig}
+   config  # the main kernel config file
++  galaxy-book4-max98390-support.patch
+ )
+ validpgpkeys=(
+   ABAF11C65A2970B130ABE3C479BE3E4300411886  # Linus Torvalds
+@@ -48,12 +50,14 @@ sha256sums=('9106a4605da9e31ff17659d958782b815f9591ab308d03b0ee21aad6c7dced4b'
+             'SKIP'
+             '1461db929834dad3b39595dcff5650afcb69465be1f3a11d6f63e89ed3904910'
+             'SKIP'
+-            '862ba1d840619a220e126759b7a1632432747a051d4eddba44a656823176b013')
++            'SKIP'
++            'SKIP')
+ b2sums=('b94b7b9bf18aca0c3e50baf79b009a1448fc6cd9c3ee019f641cc247dcf53a4abef4274ee0608ad8cd4943af69854363a95d26e117ff23620bb07dccb158859f'
+         'SKIP'
+         '38b85a7633fb194bd77786963d123c5439e0e8b73ba2beeb9f1c465daf9a9798014f3b342a90d2bfb3d31aed349114ab7245f1a3fbf864546a503199b2ac956b'
+         'SKIP'
+-        '1a1c39c04046ce3a3f6ecb0c38d36c8c766c641c534f76a2a10b60dd9e5db6d57339eb024e78da744cff958187061ed218aeadcbb7dc74cb536b4dfbfd7b24bf')
++        'SKIP'
++        'SKIP')
+ 
+ export KBUILD_BUILD_HOST=archlinux
+ export KBUILD_BUILD_USER=$pkgbase
+diff --git a/config b/config
+index 6798219..32478e8 100644
+--- a/config
++++ b/config
+@@ -7670,6 +7670,8 @@ CONFIG_SND_HDA_SCODEC_CS35L56_SPI=m
+ CONFIG_SND_HDA_SCODEC_TAS2781=m
+ CONFIG_SND_HDA_SCODEC_TAS2781_I2C=m
+ CONFIG_SND_HDA_SCODEC_TAS2781_SPI=m
++CONFIG_SND_HDA_SCODEC_MAX98390=m
++CONFIG_SND_HDA_SCODEC_MAX98390_I2C=m
+ CONFIG_SND_HDA_CORE=m
+ CONFIG_SND_HDA_DSP_LOADER=y
+ CONFIG_SND_HDA_COMPONENT=y
